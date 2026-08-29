@@ -63,11 +63,13 @@ test("does not turn missing API or write requests into the app shell", async () 
 
 test("syncs Feishu report text and returns the published image snapshot", async (context) => {
   let queryCount = 0;
-  context.mock.method(globalThis, "fetch", async (url) => {
+  const queryBodies = [];
+  context.mock.method(globalThis, "fetch", async (url, options = {}) => {
     if (String(url).includes("tenant_access_token")) {
       return Response.json({ code: 0, tenant_access_token: "tenant-token" });
     }
     queryCount += 1;
+    queryBodies.push(JSON.parse(options.body));
     return Response.json({
       code: 0,
       data: {
@@ -101,6 +103,7 @@ test("syncs Feishu report text and returns the published image snapshot", async 
   assert.equal(payload.dailyReports[0].fields["今日达成"], "完成云端同步");
   assert.equal(payload.images["2026-08-28"].items[0].src, "/report-images/28.jpeg");
   assert.equal(queryCount, 2);
+  assert.deepEqual(queryBodies.map((body) => body.page_size), [10, 10]);
 });
 
 test("emits the files required by Sites packaging", async () => {

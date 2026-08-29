@@ -80,7 +80,7 @@ async function queryReports(env, token, ruleId, range) {
         user_id: env.FEISHU_REPORT_USER_ID || DEFAULT_REPORT_USER_ID,
         commit_start_time: range.start,
         commit_end_time: range.end,
-        page_size: 50,
+        page_size: 10,
         page_token: pageToken,
       }),
     });
