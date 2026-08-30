@@ -1,11 +1,9 @@
-name: Sync Feishu and deploy Pages
+name: Deploy dashboard to Pages
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
-  schedule:
-    - cron: "*/10 * * * *"
 
 permissions:
   contents: read
@@ -29,11 +27,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Sync Feishu reports
-        env:
-          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
-          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-        run: node scripts/sync-reports.mjs 2026-07 2026-08
       - name: Build dashboard
         env:
           VITE_BASE_PATH: /yuhang-work-report/

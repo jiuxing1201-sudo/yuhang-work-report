@@ -5,5 +5,4 @@ audit/
 /*.jpg
 /*.jpeg
 .DS_Store
-public/data/*.json
 .tools/
