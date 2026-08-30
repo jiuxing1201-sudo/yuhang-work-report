@@ -5,10 +5,25 @@ import {
   Plus, Sparkle, Target, ThumbsUp, UploadSimple, WarningCircle, X,
 } from "@phosphor-icons/react";
 
+const baseUrl = import.meta.env.BASE_URL || "/";
+const staticDataMode = import.meta.env.VITE_STATIC_DATA === "true";
+
+function publicUrl(value) {
+  if (!value || /^(data:|blob:|https?:)/.test(value)) return value;
+  return `${baseUrl}${String(value).replace(/^\/+/, "")}`;
+}
+
+function normalizeImages(source) {
+  return Object.fromEntries(Object.entries(source || {}).map(([date, image]) => {
+    const items = (image.items?.length ? image.items : [image]).map((item) => ({ ...item, src: publicUrl(item.src) }));
+    return [date, { ...image, ...items[0], items }];
+  }));
+}
+
 const wallpapers = [
-  { id: "coast", label: "海岸晨光", src: "/assets/wallpaper-coast.png" },
-  { id: "valley", label: "山谷晴空", src: "/assets/wallpaper-valley.png" },
-  { id: "sunset", label: "日落云海", src: "/assets/wallpaper-sunset.png" },
+  { id: "coast", label: "海岸晨光", src: publicUrl("assets/wallpaper-coast.png") },
+  { id: "valley", label: "山谷晴空", src: publicUrl("assets/wallpaper-valley.png") },
+  { id: "sunset", label: "日落云海", src: publicUrl("assets/wallpaper-sunset.png") },
 ];
 
 const fieldMap = {
@@ -38,11 +53,11 @@ const keywordDefinitions = [
 
 const importedImages = {
   "2026-08-28": {
-    src: "/report-images/2026-08-28-1.jpeg",
+    src: publicUrl("report-images/2026-08-28-1.jpeg"),
     name: "8月28日日报原图 1",
     items: [
-      { src: "/report-images/2026-08-28-1.jpeg", name: "8月28日日报原图 1" },
-      { src: "/report-images/2026-08-28-2.png", name: "8月28日日报原图 2" },
+      { src: publicUrl("report-images/2026-08-28-1.jpeg"), name: "8月28日日报原图 1" },
+      { src: publicUrl("report-images/2026-08-28-2.png"), name: "8月28日日报原图 2" },
     ],
   },
 };
@@ -189,19 +204,24 @@ export function App() {
     [imageDates, images],
   );
 
-  const syncReports = async (withImages = false) => {
-    setSyncState((state) => ({ ...state, status: "loading", message: "" }));
+  const syncReports = async (withImages = false, silent = false) => {
+    if (!silent) setSyncState((state) => ({ ...state, status: "loading", message: "" }));
     try {
-      const response = await fetch(`/api/sync?year=${viewMonth.year}&month=${viewMonth.month}${withImages ? "&images=1&full=1" : ""}`);
+      const endpoint = staticDataMode
+        ? `${publicUrl(`data/${viewMonth.year}-${pad(viewMonth.month)}.json`)}?v=${Date.now()}`
+        : `/api/sync?year=${viewMonth.year}&month=${viewMonth.month}${withImages ? "&images=1&full=1" : ""}`;
+      const response = await fetch(endpoint, { cache: "no-store" });
       const data = await response.json();
       if (!response.ok || !data.ok) throw new Error(data.message || "同步失败");
       setReports(data.dailyReports);
       setWeeklyReports(data.weeklyReports);
-      if (data.images) setImages((current) => ({ ...current, ...data.images }));
+      if (data.images) setImages((current) => ({ ...current, ...normalizeImages(data.images) }));
       const latest = [...data.dailyReports].sort((a, b) => b.commitTime - a.commitTime)[0];
       setSelectedDate(latest?.date || dateKey(viewMonth.year, viewMonth.month, 1));
       setSelectedReportId(latest?.id || null);
-      const imageMessage = withImages
+      const imageMessage = staticDataMode
+        ? "已加载网站最新发布版本"
+        : withImages
         ? `已检查${data.imageSync?.checked || 0}篇汇报，新增${data.imageSync?.imported || 0}张原图`
         : "文字已同步，图片保持最近发布版本";
       setSyncState({ status: "success", at: data.syncedAt, message: imageMessage });
@@ -212,6 +232,9 @@ export function App() {
 
   useEffect(() => {
     syncReports(false);
+    if (!staticDataMode) return undefined;
+    const timer = window.setInterval(() => syncReports(false, true), 60_000);
+    return () => window.clearInterval(timer);
   }, [viewMonth.year, viewMonth.month]);
 
   const changeMonth = (offset) => {

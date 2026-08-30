@@ -2,8 +2,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { loadEnvFile } from "../src/env.js";
-import { FeishuClient } from "../src/feishu-client.js";
+import { loadEnvFile } from "./server/load-env.js";
+import { fetchMonthlyReports } from "./server/report-service.js";
 import { createFeishuImageSynchronizer } from "./server/feishu-image-sync.js";
 
 const dashboardDir = path.dirname(fileURLToPath(import.meta.url));
@@ -45,33 +45,7 @@ function normalizeReport(item) {
   };
 }
 
-async function queryReports(client, ruleId, range) {
-  const items = [];
-  let pageToken = "";
-  do {
-    const result = await client.request({
-      method: "POST",
-      path: "/open-apis/report/v1/tasks/query",
-      query: { user_id_type: "open_id" },
-      body: {
-        rule_id: ruleId,
-        user_id: reportUserId,
-        commit_start_time: range.start,
-        commit_end_time: range.end,
-        page_size: 10,
-        page_token: pageToken,
-      },
-    });
-    const data = result.data?.data || {};
-    items.push(...(data.items || []));
-    pageToken = data.page_token || "";
-    if (!data.has_more) break;
-  } while (pageToken);
-  return items.map(normalizeReport);
-}
-
 function feishuSyncPlugin() {
-  const client = new FeishuClient();
   const imageSynchronizer = createFeishuImageSynchronizer({ dashboardDir });
   return {
     name: "feishu-report-sync",
@@ -88,11 +62,17 @@ function feishuSyncPlugin() {
             res.end(JSON.stringify({ ok: false, message: "月份参数无效。" }));
             return;
           }
-          const range = monthRange(year, month);
-          const [dailyReports, weeklyReports] = await Promise.all([
-            queryReports(client, rules.daily, range),
-            queryReports(client, rules.weekly, range),
-          ]);
+          const payload = await fetchMonthlyReports({
+            year,
+            month,
+            appId: process.env.FEISHU_APP_ID,
+            appSecret: process.env.FEISHU_APP_SECRET,
+            userId: reportUserId,
+            userName: reportUserName,
+            dailyRuleId: rules.daily,
+            weeklyRuleId: rules.weekly,
+          });
+          const { dailyReports, weeklyReports } = payload;
           const reports = [...dailyReports, ...weeklyReports];
           const imageResult = url.searchParams.get("images") === "1"
             ? await imageSynchronizer.sync(reports, { force: url.searchParams.get("full") === "1" })
@@ -117,6 +97,7 @@ function feishuSyncPlugin() {
 }
 
 export default defineConfig({
+  base: process.env.VITE_BASE_PATH || "/",
   build: {
     outDir: "dist/client",
   },

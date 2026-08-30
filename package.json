@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && node scripts/prepare-sites-build.mjs",
+    "build:pages": "vite build",
+    "sync:reports": "node scripts/sync-reports.mjs",
     "preview": "vite preview",
     "test:sites": "node --test tests/sites-worker.test.mjs",
     "test:image-sync": "node --test tests/feishu-image-sync.test.mjs"
