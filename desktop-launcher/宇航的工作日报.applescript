@@ -1,3 +1,3 @@
 on run
-	open location "https://yuhang-work-report.work-dashboard.workers.dev"
+	«event GURLGURL» "https://jiuxing1201-sudo.github.io/yuhang-work-report/"
 end run
