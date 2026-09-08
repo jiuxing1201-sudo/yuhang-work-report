@@ -1,0 +1,55 @@
+{
+  "ok": true,
+  "syncedAt": "2026-09-08T04:05:33.497Z",
+  "user": {
+    "id": "ou_ccae433df88592343ab53c197a2ea7ea",
+    "name": "郑宇航"
+  },
+  "month": {
+    "year": 2026,
+    "month": 9
+  },
+  "dailyReports": [
+    {
+      "id": "7682746035927928004",
+      "date": "2026-09-07",
+      "commitTime": 1788778735,
+      "type": "工作日报",
+      "fields": {
+        "今日达成": "若霞老师拍摄   ",
+        "今日做得好的": "造了两个新的景，重新布光，和老师一起磨合新的视角，非常满意",
+        "还能做的更好的": "继续保持，下次再换一些场景",
+        "明日计划": "调休"
+      }
+    }
+  ],
+  "weeklyReports": [],
+  "images": {
+    "2026-09-07": {
+      "src": "/report-images/2026-09-07-1-1c592dd6e46e.jpeg",
+      "name": "2026-09-07 汇报原图 1",
+      "hash": "1c592dd6e46e",
+      "items": [
+        {
+          "src": "/report-images/2026-09-07-1-1c592dd6e46e.jpeg",
+          "name": "2026-09-07 汇报原图 1",
+          "hash": "1c592dd6e46e"
+        },
+        {
+          "src": "/report-images/2026-09-07-2-b9305552be28.jpeg",
+          "name": "2026-09-07 汇报原图 2",
+          "hash": "b9305552be28"
+        },
+        {
+          "src": "/report-images/2026-09-07-3-d024114d8b83.jpeg",
+          "name": "2026-09-07 汇报原图 3",
+          "hash": "d024114d8b83"
+        }
+      ]
+    }
+  },
+  "imageSync": {
+    "imported": 3,
+    "checked": 1
+  }
+}

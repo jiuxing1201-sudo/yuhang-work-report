@@ -14,6 +14,13 @@ export function monthRange(year, month) {
   return { start, end };
 }
 
+export function dayRange(date) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error(`日期格式无效：${date}`);
+  const [year, month, day] = date.split("-").map(Number);
+  const start = Math.floor(Date.UTC(year, month - 1, day, -8) / 1000);
+  return { start, end: start + 24 * 60 * 60 - 1 };
+}
+
 function localDate(timestamp) {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Shanghai",
@@ -99,6 +106,19 @@ export async function fetchMonthlyReports(options) {
     dailyReports,
     weeklyReports,
   };
+}
+
+export async function fetchDailyReportsForDate(options) {
+  const fetchImpl = options.fetchImpl || fetch;
+  const config = { ...DEFAULT_REPORT_CONFIG, ...options };
+  const token = await tenantToken({ ...config, fetchImpl });
+  return queryReports({
+    token,
+    ruleId: config.dailyRuleId,
+    userId: config.userId,
+    range: dayRange(config.date),
+    fetchImpl,
+  });
 }
 
 export function imagesForReports(reports, manifest) {
