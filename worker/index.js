@@ -3,6 +3,9 @@ const REPORT_QUERY_URL = "https://open.feishu.cn/open-apis/report/v1/tasks/query
 const DEFAULT_DAILY_RULE_ID = "7550937561265324035";
 const DEFAULT_WEEKLY_RULE_ID = "7589177356959468484";
 const DEFAULT_REPORT_USER_ID = "ou_ccae433df88592343ab53c197a2ea7ea";
+const REPORT_DATE_OVERRIDES = {
+  "7687933906469735625": "2026-09-22",
+};
 
 function json(payload, status = 200) {
   return new Response(JSON.stringify(payload), {
@@ -34,7 +37,7 @@ function localDate(timestamp) {
 function normalizeReport(item) {
   return {
     id: item.task_id,
-    date: localDate(item.commit_time),
+    date: REPORT_DATE_OVERRIDES[item.task_id] || localDate(item.commit_time),
     commitTime: item.commit_time,
     type: item.rule_name,
     fields: Object.fromEntries(

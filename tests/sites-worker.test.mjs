@@ -1,7 +1,18 @@
 import assert from "node:assert/strict";
 import { access } from "node:fs/promises";
 import test from "node:test";
-import worker from "../worker/index.js";
+import worker, { internals } from "../worker/index.js";
+
+test("uses the Feishu report day override when it differs from commit time", () => {
+  const report = internals.normalizeReport({
+    task_id: "7687933906469735625",
+    commit_time: Math.floor(Date.parse("2026-09-21T18:30:17+08:00") / 1000),
+    rule_name: "云学堂工作日报",
+    form_contents: [],
+  });
+
+  assert.equal(report.date, "2026-09-22");
+});
 
 test("serves existing static assets without a fallback", async () => {
   const calls = [];

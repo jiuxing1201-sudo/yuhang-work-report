@@ -1,5 +1,8 @@
 const TOKEN_URL = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal";
 const REPORT_QUERY_URL = "https://open.feishu.cn/open-apis/report/v1/tasks/query?user_id_type=open_id";
+const REPORT_DATE_OVERRIDES = {
+  "7687933906469735625": "2026-09-22",
+};
 
 export const DEFAULT_REPORT_CONFIG = {
   dailyRuleId: "7550937561265324035",
@@ -35,7 +38,7 @@ function localDate(timestamp) {
 function normalizeReport(item) {
   return {
     id: item.task_id,
-    date: localDate(item.commit_time),
+    date: REPORT_DATE_OVERRIDES[item.task_id] || localDate(item.commit_time),
     commitTime: item.commit_time,
     type: item.rule_name,
     fields: Object.fromEntries(
