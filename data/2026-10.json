@@ -1,0 +1,45 @@
+{
+  "ok": true,
+  "syncedAt": "2026-10-09T04:02:30.932Z",
+  "user": {
+    "id": "ou_ccae433df88592343ab53c197a2ea7ea",
+    "name": "郑宇航"
+  },
+  "month": {
+    "year": 2026,
+    "month": 10
+  },
+  "dailyReports": [
+    {
+      "id": "7694242311203638241",
+      "date": "2026-10-08",
+      "commitTime": 1791455406,
+      "type": "云学堂工作日报",
+      "fields": {
+        "今日达成": "1、整理ADQ视频素材2、gpt+剪映，work Buddy+剪映，豆包+剪映测试 ",
+        "今日做得好的": "不断尝试",
+        "还能做的更好的": "继续保持",
+        "明日计划": "剪辑新的ADQ视频，AI剪辑给一个可实操的方案"
+      }
+    }
+  ],
+  "weeklyReports": [],
+  "images": {
+    "2026-10-08": {
+      "src": "/report-images/2026-10-08-1-be7e85045780.png",
+      "name": "2026-10-08 汇报原图 1",
+      "hash": "be7e85045780",
+      "items": [
+        {
+          "src": "/report-images/2026-10-08-1-be7e85045780.png",
+          "name": "2026-10-08 汇报原图 1",
+          "hash": "be7e85045780"
+        }
+      ]
+    }
+  },
+  "imageSync": {
+    "imported": 1,
+    "checked": 1
+  }
+}
