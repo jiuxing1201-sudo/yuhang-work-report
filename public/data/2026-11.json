@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "syncedAt": "2026-11-03T06:46:48.806020Z",
+  "user": {
+    "id": "ou_ccae433df88592343ab53c197a2ea7ea",
+    "name": "郑宇航"
+  },
+  "month": {
+    "year": 2026,
+    "month": 11
+  },
+  "dailyReports": [
+    {
+      "id": "7703736124888337399",
+      "date": "2026-11-03",
+      "commitTime": 1793665890,
+      "type": "云学堂工作日报",
+      "fields": {
+        "今日达成": "调休",
+        "今日做得好的": "调休",
+        "还能做的更好的": "调休",
+        "明日计划": "adq视频修改，ai剪辑完善，报销整理，龙哥视频调色"
+      }
+    }
+  ],
+  "weeklyReports": [],
+  "images": {},
+  "imageSync": {
+    "imported": 0,
+    "checked": 0,
+    "mode": "published-snapshot"
+  }
+}
